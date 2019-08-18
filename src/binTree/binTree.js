@@ -3,7 +3,7 @@
  **/
 
 class BinNode {
-    constructor(data, leftNode = null, rightNode = null, parent = null) {
+    constructor(data, parent = null, leftNode = null, rightNode = null) {
         this.data = data;
         this.lChild = leftNode;
         this.rChild = rightNode;
@@ -49,8 +49,40 @@ class BinNode {
         // this.print();
     }
 
+    // 是否为其右孩子
+    isRChild(childNode) {
+        if (childNode === this.rChild) {
+            return true;
+        }
+        return false;
+    }
+
     // （中序遍历意义下）当前节点的直接后继
-    succ() {}
+    succ() {
+        // 临时记录
+        let s = this;
+        // 有右孩子的情况，直接后继在右子树中的最小节点
+        if (s.rChild) {
+            s = s.rChild;
+            while (s.lChild) {
+                s = s.lChild;
+            }
+        }
+        // 若无右孩子，后继为将当前节点包含在其左子树中的最小祖先
+        else {
+            let sParent = s.parent;
+            while (sParent.isRChild(s)) {
+                s = s.parent;
+                sParent = s.parent;
+                // 中序遍历最后一项的错误处理，返回null
+                if (sParent === null) {
+                    return null;
+                }
+            }
+            s = s.parent;
+        }
+        return s;
+    }
 
     // 子树的层次遍历
     travLevel() {}
@@ -64,11 +96,6 @@ class BinNode {
     // 子树的后序遍历
     travPost() {}
 }
-
-// let test = new BinNode(0, null, null);
-// test.insertAsLC(2);
-// test.insertAsRC(3);
-// console.log(test.size());
 
 
 class BinTree {
@@ -242,51 +269,8 @@ function utilHeight(node) {
     return node ? node.height : -1;
 }
 
-let rootNode = new BinNode(1);
-let node2 = new BinNode(2);
-let node3 = new BinNode(3);
-let node4 = new BinNode(4);
-let node5 = new BinNode(5);
-let node6 = new BinNode(6);
-let node7 = new BinNode(7);
-let node8 = new BinNode(8);
-let node9 = new BinNode(9);
 
-let testTree = new BinTree(rootNode);
-// testTree.travPreRecursion(rootNode);
-// console.log('=====================');
-testTree.insertAsLC(rootNode, node2);
-// testTree.travPreRecursion(rootNode);
-// console.log('=====================');
-testTree.insertAsRC(rootNode, node6);
-// testTree.travPreRecursion(rootNode);
-// console.log('=====================');
-testTree.insertAsLC(node2, node3);
-// testTree.travPreRecursion(rootNode);
-// console.log('=====================');
-testTree.insertAsRC(node2, node4);
-// testTree.travPreRecursion(rootNode);
-// console.log('=====================');
-testTree.insertAsLC(node4, node5);
-// testTree.travPreRecursion(rootNode);
-// console.log('=====================');
-testTree.insertAsRC(node6, node7);
-// testTree.travPreRecursion(rootNode);
-// console.log('=====================');
-testTree.insertAsLC(node6, node9);
-// testTree.travPreRecursion(rootNode);
-// console.log('=====================');
-testTree.insertAsLC(node7, node8);
-// testTree.travPreRecursion();
-// console.log('+++++++++++++++++++++');
-// testTree.travPreIteration();
-// console.log('---------------------');
-// testTree.travPreIteration2();
-
-// testTree.travInRecursion();
-// console.log('---------------------');
-// testTree.travInIteration();
-
-testTree.travLevel();
-
-
+module.exports = {
+    BinNode,
+    BinTree
+};
